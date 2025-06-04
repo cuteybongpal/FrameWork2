@@ -6,7 +6,7 @@ public static class DIContainer
 {
     static Dictionary<Type, Func<IDependency>> bindedType = new Dictionary<Type, Func<IDependency>>();
 
-    public static T GetInstance<T>() where T : IDependency
+    public static T GetInstance<T>() where T : class, IDependency
     {
         if (!bindedType.ContainsKey(typeof(T)))
         {
@@ -14,14 +14,14 @@ public static class DIContainer
             return default(T);
         }
 
-        if (T is not IPool)
-            return bindedType[typeof(T)].Invoke();
+        if (!typeof(IPool).IsAssignableFrom(typeof(T)))
+            return bindedType[typeof(T)].Invoke() as T;
 
         return default(T);
     }
-    public static void ReturnInstance<T>(ref T element) where T : IDependency
+    public static void ReturnInstance<T>(ref T element) where T : class, IDependency
     {
-        if (T is not IPool)
+        if (!typeof(IPool).IsAssignableFrom(typeof(T)))
         {
             element = null;
             return;
