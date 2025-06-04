@@ -5,8 +5,8 @@ using System;
 public static class DIContainer
 {
     static Dictionary<Type, Func<IDependency>> bindedType = new Dictionary<Type, Func<IDependency>>();
-
-    public static T GetInstance<T>() where T : class, IDependency
+    static DIPool dIPool = new DIPool();
+    public static IDependency GetInstance<T>() where T : class, IDependency
     {
         if (!bindedType.ContainsKey(typeof(T)))
         {
@@ -15,9 +15,9 @@ public static class DIContainer
         }
 
         if (!typeof(IPool).IsAssignableFrom(typeof(T)))
-            return bindedType[typeof(T)].Invoke() as T;
+            return bindedType[typeof(T)].Invoke();
 
-        return default(T);
+        return dIPool.Get<T>(bindedType[typeof(T)] as Func<IPool>) as T;
     }
     public static void ReturnInstance<T>(ref T element) where T : class, IDependency
     {
@@ -26,6 +26,7 @@ public static class DIContainer
             element = null;
             return;
         }
+        dIPool.Return<T>(element);
     }
 
     public static void Bind<IKey>(Func<IKey> func) where IKey : class, IDependency
