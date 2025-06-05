@@ -7,7 +7,7 @@ public class DIPool
     Dictionary<Type, Queue<IPool>> poolings = new Dictionary<Type, Queue<IPool>>();
 
 
-    public T Get<T>(Func<T> func) where T : class, IPool
+    public T Get<T>(Func<T> func) where T : class, IDependency
     {
         T pool = null;
 
@@ -21,8 +21,14 @@ public class DIPool
 
         return pool;
     }
-    public void Return<T>(T element) where T : class, IPool
+    public void Return<T>(T element) where T : class, IDependency
     {
+        if (element is not IPool)
+            return;
 
+        if (!poolings.ContainsKey(typeof(T)))
+            poolings[typeof(T)] = new Queue<IPool>();
+
+        poolings[typeof(T)].Enqueue(element as IPool);
     }
 }
