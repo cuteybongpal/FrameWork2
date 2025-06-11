@@ -1,16 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Logger : MonoBehaviour
+public class Logger : ILogger
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Log(string message)
     {
-        
+        //todo : ���߿� FireBase �����̳� �񵿱� �Լ��� ���� �Ϸ���� �ɸ� �ð� Ȥ�� ����� GPU�Ǵ� CPU ��뷮�� �߰�.
+        Debug.Log(message);
     }
-
-    // Update is called once per frame
-    void Update()
+    public void Error(string message)
     {
-        
+        //todo : FireBase ���� ���̺�� ���� �޼��� �ֱ�
+        Debug.Log(message);
     }
+    
 }
