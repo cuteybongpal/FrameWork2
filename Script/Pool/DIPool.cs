@@ -6,10 +6,21 @@ public class DIPool
 {
     Dictionary<Type, Queue<IPool>> poolings = new Dictionary<Type, Queue<IPool>>();
 
-
-    public T Get<T>(Func<T> func) where T : class, IDependency
+    /// <summary>
+    /// DI�� ��ϵ� ��ü�� ���� ������Ʈ Ǯ�� �޼����Դϴ�.
+    /// 
+    /// ����: ���׸� Ÿ�� T�� IPool ������ ���� ���� ������,
+    /// IPool ������ �߰��� ��� DIContainer����
+    /// - IPool�� ��ӹ��� ��ü
+    /// - IPool�� ��ӹ��� ���� ��ü
+    /// �� �����ϱ� ���� GetInstance �޼��带 ���� �����ؾ� �ϴ� ������ �Ǳ� �����Դϴ�.
+    /// 
+    /// ���� �� �޼���� Func&lt;IPool&gt;�� �޾� ���ο��� T�� ĳ�����ϸ�,
+    /// ȣ�� �ÿ��� �ݵ�� T�� IPool�� ����Ѵٰ� ����ž� �մϴ�.
+    /// </summary>
+    public IPool Get<T>(Func<IPool> func) where T : class, IDependency
     {
-        T pool = null;
+        IPool pool = null;
 
         if (!poolings.ContainsKey(typeof(T)))
             poolings[typeof(T)] = new Queue<IPool>();
@@ -17,15 +28,13 @@ public class DIPool
         if (poolings[typeof(T)].Count == 0)
             pool = func.Invoke();
         else
-            pool = poolings[typeof(T)].Dequeue() as T;
+            pool = poolings[typeof(T)].Dequeue();
 
         return pool;
     }
-    public void Return<T>(T element) where T : class, IDependency
+    //IPool ���� ������ ���� ���� ���� ���� ������ ������
+    public void Return<T>(T element) where T : class
     {
-        if (element is not IPool)
-            return;
-
         if (!poolings.ContainsKey(typeof(T)))
             poolings[typeof(T)] = new Queue<IPool>();
 
