@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public interface ILogger
+public interface ILogger : IMiddleWare
 {
-    public Task Log<T>(IRequest<T> request, string message);
+    public Task Log(string message);
 
-    public Task Error<T>(IRequest<T> request, string message);
+    public Task Error(string message);
 }

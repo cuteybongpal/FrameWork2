@@ -19,7 +19,7 @@ public class DI
             if (!typeof(IPool).IsAssignableFrom(typeof(T)))
                 return bindedType[typeof(T)].Invoke() as T;
 
-            return dIPool.Get<T>(bindedType[typeof(T)] as Func<T>);
+            return dIPool.Get<T>(bindedType[typeof(T)] as Func<IPool>) as T;
         }
 
         public static void ReturnInstance<T>(ref T element) where T : class, IDependency
@@ -53,7 +53,7 @@ public class DI
             if (!typeof(IPool).IsAssignableFrom(typeof(T)))
                 return bindedType[(key, typeof(T))].Invoke() as T;
 
-            return dIPool.Get<T>(bindedType[(key, typeof(T))] as Func<T>);
+            return dIPool.Get<T>(bindedType[(key, typeof(T))] as Func<IPool>) as T;
         }
 
         public static void ReturnInstance<T>(ref T element) where T : class, IDependency
@@ -66,7 +66,7 @@ public class DI
             dIPool.Return<T>(element);
         }
 
-        public static void Bind<IKey>(Func<IKey> func, string key) where IKey : class, IDependency
+        public static void Bind<IKey>(Func<IKey> func, string key) where IKey : class, IDependency, IMiddleWare
         {
             bindedType.Add((key, typeof(IKey)), func);
         }

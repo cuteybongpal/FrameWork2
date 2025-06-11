@@ -1,19 +1,42 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using System.Diagnostics;
 
 public class Logger : ILogger
 {
-    public void Log(string message)
+    public async Task Error(string message)
     {
-        //todo : ï¿½ï¿½ï¿½ß¿ï¿½ FireBase ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ñµ¿±ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ ï¿½É¸ï¿½ ï¿½Ã°ï¿½ È¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ GPUï¿½Ç´ï¿½ CPU ï¿½ï¿½ë·®ï¿½ï¿½ ï¿½ß°ï¿½.
-        Debug.Log(message);
+        //tood: ¿À·ù ³­ °ÍÀ» FireBase¿¡ ¿Ã¸®´Â ±â´É ¸¸µé±â(¾ðÁ¨°¡)
+        UnityEngine.Debug.LogError(message);
     }
-    public void Error(string message)
+
+    public async Task Invoke<T>(IRequest<T> request)
     {
-        //todo : FireBase ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½
-        //todo : FireBase ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½
-        Debug.Log(message);
+        
     }
-    
+
+    public async Task Log(string message)
+    {
+        //tood: CPU»ç¿ë·® GPU»ç¿ë·®À» À¥ ¼­¹ö¿¡ ¿Ã¸®´Â ±â´É ¸¸µé±â(¾ðÁ¨°¡ ¤»)
+        UnityEngine.Debug.Log(message);
+    }
+    public async Task StartLogging<T>(Func<Task> action, IRequest<T> request)
+    {
+        try
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+
+            await action.Invoke();
+            sw.Stop();
+            await Log($"{request} Successed! \n ElapsedTime : {sw.ElapsedMilliseconds}ms");
+        }
+        catch(Exception e)
+        {
+            await Error($"{request} Failed: {e.ToString()}");
+        }
+
+    }
 }

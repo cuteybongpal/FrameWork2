@@ -6,18 +6,9 @@ public class DIPool
 {
     Dictionary<Type, Queue<IPool>> poolings = new Dictionary<Type, Queue<IPool>>();
 
-    /// <summary>
-    /// DI�� ��ϵ� ��ü�� ���� ������Ʈ Ǯ�� �޼����Դϴ�.
-    /// 
-    /// ����: ���׸� Ÿ�� T�� IPool ������ ���� ���� ������,
-    /// IPool ������ �߰��� ��� DIContainer����
-    /// - IPool�� ��ӹ��� ��ü
-    /// - IPool�� ��ӹ��� ���� ��ü
-    /// �� �����ϱ� ���� GetInstance �޼��带 ���� �����ؾ� �ϴ� ������ �Ǳ� �����Դϴ�.
-    /// 
-    /// ���� �� �޼���� Func&lt;IPool&gt;�� �޾� ���ο��� T�� ĳ�����ϸ�,
-    /// ȣ�� �ÿ��� �ݵ�� T�� IPool�� ����Ѵٰ� ����ž� �մϴ�.
-    /// </summary>
+    //IPool을 T타입 제약 조건을 받지 않는 이유는
+    //이것을 호출할 때 IPool을 상속받는 객체와 IPool을 상속받지 않는 객체 두개에 따라
+    //메소드를 분리해야하는 문제를 해결하기 위해서임.
     public IPool Get<T>(Func<IPool> func) where T : class, IDependency
     {
         IPool pool = null;
